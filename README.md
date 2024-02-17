@@ -100,10 +100,9 @@ This would have 6 unique versions for 5 different books. Some of the books are p
 The app requires this folder structure so that the books can be organized by author and series which is a way I strongly prefer to browse my library over other audiobook managers I've tried which put books into a long list and that's it. 
 
 <h1 align="center">Development</h1>
+This is just how I like to build and deploy the server locally while I work and is as much a reference for myself as anything. Feel free to do it differently.
 
-From here down the README needs improvement.
 ## Generate docker images and deploy compose files on portainer
-This is just how I like to build and deploy the server locally. Feel free to do it differently.
 
 - Download the repo.
 
@@ -111,11 +110,35 @@ This is just how I like to build and deploy the server locally. Feel free to do 
 
 - For python's venv:
 
-```python
+```bash
+# When first setting up
+cd /path/to/repo
 python3 -m virtualenv .venv
 source .venv/bin/activate
 pip install -r ./requirements/common.txt -r ./scrivapi/requirements/develop.txt
+
+# Afterwards
+cd /path/to/repo
+source .venv/bin/activate
 ```
+
+- For Poetry - [Matt Cale reference](https://dev.to/mattcale/pyenv-poetry-bffs-20k6)
+
+```bash
+# When first setting up 
+cd /path/to/repo
+poetry config virtualenvs.in-project true
+poetry init -n
+poetry shell
+poetry add fastapi==0.103.1
+# poetry add - all the stuff from requirements.txt and develop.txt
+
+# Afterwards
+cd /path/to/repo
+poetry shell
+```
+
+- Do some awesome work on the project.
 
 - `make tarball-dev` (or prod)
 
@@ -179,13 +202,13 @@ services:
 ## Alembic Database Migrations
 I am terrible at database migrations. Here are some notes I made at some point that might help.
 
-https://www.jeffastor.com/blog/pairing-a-postgresql-db-with-your-dockerized-fastapi-app/
+[Jeff Astor page I referenced a bunch](https://www.jeffastor.com/blog/pairing-a-postgresql-db-with-your-dockerized-fastapi-app/)
 
 `sudo docker exec -it <container_name> bash`
 
 `alembic revision -m "create_main_tables"`
 
-this will make a file in ./src/db/migrations/versions/####_"whatever_was_in_quotes".py for creating the main tables.
+This will make a file in `./src/db/migrations/versions/####_"whatever_was_in_quotes".py` for creating the main tables.
 
 Add stuff in there
 
