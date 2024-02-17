@@ -172,6 +172,8 @@ services:
 
 There is an extra ENVIRON environment variable which can be `production` (default) or `dev` which just turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking ./src/app.py
 
+Note - ./bin/run_dev.sh tries to source that ./docker/.env file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the ./bin/run_local.sh or ./bin/run_local.bat for example)
+
 
 
 Update the stack
