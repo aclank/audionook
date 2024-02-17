@@ -45,7 +45,7 @@ The available environment variables are:
 | --- | --- |
 | SECRET_KEY | A key for the SQLite database. Has no default. |
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs. | 
-| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> \<apiname>/\<apiversion> (\<your-host-domain>; \<your-email>) wikipedia-api/0.6.0 <br/> scrivapi/0.01 (example.domain.com; <span>your-email@gmail</span>.com) wikipedia-api/0.6.0 | 
+| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
 
 If not using portainer's stacks and environment variable stuff then replace the ${VARIABLEs} with your values.
 
@@ -105,11 +105,11 @@ From here down the README needs improvement.
 ## Generate docker images and deploy compose files on portainer
 This is just how I like to build and deploy the server locally. Feel free to do it differently.
 
-Download the repo.
+- Download the repo.
 
-Setup and start a python venv or use something like poetry.
+- Setup and start a python venv or use something like poetry.
 
-For python's venv:
+- For python's venv:
 
 ```python
 python3 -m virtualenv .venv
@@ -117,21 +117,21 @@ source .venv/bin/activate
 pip install -r ./requirements/common.txt -r ./scrivapi/requirements/develop.txt
 ```
 
-'make tarball-dev' (or prod)
+- `make tarball-dev` (or prod)
 
-In Portainer -> Images -> Build a new image -> Upload
+- In Portainer -> Images -> Build a new image -> Upload
 
-Set the container name (your/container_name)
+- Set the container name `your/container_name`
 
-Select file (audionook_dev.tar was generated in the ./docker folder from the make command)
+- Select file (`audionook_dev.tar` was generated in the `./docker` folder from the make command)
 
-Build the image (sometimes I have to build the prod image twice because it'll fail with: Unexpected token < blabla)
+- Build the image (sometimes I have to build the prod image twice because it'll fail with: `Unexpected token < blabla`)
 
-In Portainer -> Stacks -> Add stack -> copy/ paste docker-compose-dev.yml
+- In Portainer -> Stacks -> Add stack -> copy/ paste `docker-compose-dev.yml`
 
-\+ Add an environment variable * 3 (SECRET_KEY, WIKI_USER_AGENT, ENVIRON_LOGLEVEL)
+- \+ Add an environment variable * 3 `SECRET_KEY`, `WIKI_USER_AGENT`, `ENVIRON_LOGLEVEL`
 
-For the dev stack to work you need to mount many extra things in the yaml file: 
+- For the dev stack to work you need to mount many extra things in the yaml file: 
 
 ```yaml
 version: '3'
@@ -170,29 +170,27 @@ services:
       - public-port:80
 ```
 
-There is an extra ENVIRON environment variable which can be `production` (default) or `dev` which just turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking ./src/app.py
+- Update the stack
 
-Note - ./bin/run_dev.sh tries to source that ./docker/.env file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the ./bin/run_local.sh or ./bin/run_local.bat for example)
+- Note - There is an extra `ENVIRON` environment variable which can be `production` (default) or `dev` which just turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking `./src/app.py`
 
-
-
-Update the stack
+- Note - `./bin/run_dev.sh` tries to source that `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
 
 ## Alembic Database Migrations
 I am terrible at database migrations. Here are some notes I made at some point that might help.
 
 https://www.jeffastor.com/blog/pairing-a-postgresql-db-with-your-dockerized-fastapi-app/
 
-sudo docker exec -it \<container> bash
+`sudo docker exec -it <container_name> bash`
 
-alembic revision -m "create_main_tables"
+`alembic revision -m "create_main_tables"`
 
 this will make a file in ./src/db/migrations/versions/####_"whatever_was_in_quotes".py for creating the main tables.
 
 Add stuff in there
 
-alembic upgrade head<br/>
-alembic downgrade head?
+`alembic upgrade head`<br/>
+`alembic downgrade head`
 
 ## Public Access
 Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of doing that. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
