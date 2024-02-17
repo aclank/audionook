@@ -39,14 +39,14 @@ services:
 ```
 
 The available environment variables are:
-- SECRET_KEY: A key for the SQLite database
-- ENVIRON_LOGLEVEL: defaults to info, can be debug. Prints more stuff into the logs
-- WIKI_USER_AGENT: an http header for getting some metadata about authors.
 
-Syntax for the Wiki User Agent is like this. The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same.
-- \<name>/\<version> (\<url>; \<email>) wikipedia-api/0.6.0
+| Key | Description |
+| --- | --- |
+| SECRET_KEY | A key for the SQLite database. Has no default. |
+| ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs | 
+| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this: (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same.) <br/>\<apiname>/\<apiversion> (\<your-host-domain>; \<your-email>) wikipedia-api/0.6.0 | 
 
-Once the docker container is running you can checkout the website at `http://localhost:public-port`.
+Once the docker container is running you can checkout the website at `http://localhost:public-port`
 
 Create an admin account and generate the library based off the books you supply. Start listening and enjoy!
 
