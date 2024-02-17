@@ -96,9 +96,21 @@ The app requires this folder structure so that the books can be organized by aut
 
 <h1 align="center">Development</h1>
 
-From here down the README needs improvement
+From here down the README needs improvement.
 ## Generate docker images and deploy compose files on portainer
-Download the repo
+This is just how I like to build and deploy the server locally. Feel free to do it differently.
+
+Download the repo.
+
+Setup and start a python venv or use something like poetry.
+
+For python's venv:
+
+```python
+python3 -m virtualenv .venv
+source .venv/bin/activate
+pip install -r ./requirements/common.txt -r ./scrivapi/requirements/develop.txt
+```
 
 'make tarball-dev' (or prod)
 
@@ -106,7 +118,7 @@ In Portainer -> Images -> Build a new image -> Upload
 
 Set the container name (your/container_name)
 
-Select file (audionook_dev.tar was generated in step 1)
+Select file (audionook_dev.tar was generated in the ./docker folder from the make command)
 
 Build the image (sometimes I have to build the prod image twice because it'll fail with: Unexpected token < blabla)
 
