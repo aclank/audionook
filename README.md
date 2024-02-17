@@ -16,7 +16,7 @@ There will be an Android app for accessing the server which allows for offline l
 ## Deployment
 The Docker image can be found [here](https://hub.docker.com/r/aclank/audionook) (in the future)
 
-I like to host it in portainer with a compose file like this:<br/>Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
+I like to host it in portainer with a compose file like this:<br/>- Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
 
 ```yaml
 version: '3'
@@ -45,7 +45,7 @@ The available environment variables are:
 | --- | --- |
 | SECRET_KEY | A key for the SQLite database. Has no default. |
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs. | 
-| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this<br/>(The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/>`<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
 
 If not using portainer's stacks and environment variable stuff then replace the ${VARIABLES} with your values directly.
 
@@ -148,13 +148,13 @@ poetry shell
 
 - Select file (`audionook_dev.tar` was generated in the `./docker` folder from the make command)
 
-- Build the image (sometimes I have to build the prod image twice because it'll fail with: `Unexpected token < blabla`)
+- Build the image<br/>- sometimes I have to build the prod image twice because it'll fail with: `Unexpected token '&lt;', "[&lt;!DOCTYPE "... is not valid JSON`
 
 - In Portainer -> Stacks -> Add stack -> copy/ paste `docker-compose-dev.yml`
 
 - \+ Add an environment variable * 3 `SECRET_KEY`, `WIKI_USER_AGENT`, `ENVIRON_LOGLEVEL`
 
-- For the dev stack to work you need to mount many extra things in the yaml file: <br/> Code here is possibly out of date. Refer to: [docker-compose-dev.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose-dev.yml)
+- For the dev stack to work you need to mount many extra things in the yaml file: <br/>- Code here is possibly out of date. Refer to: [docker-compose-dev.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose-dev.yml)
 
 ```yaml
 version: '3'
@@ -195,9 +195,9 @@ services:
 
 - Update the stack
 
-- Note - There is an extra `ENVIRON` environment variable which can be `production` (default) or `dev` which just turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking `./src/app.py`
+- Note - There is an extra `ENVIRON` environment variable which can be `production` (default) or `dev` and turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking `./src/app.py` and `./web/nginx/sites-available/audionook.conf`
 
-- Note - `./bin/run_dev.sh` tries to source that `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
+- Note - `./bin/run_dev.sh` tries to source the `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
 
 ## Alembic Database Migrations
 I am terrible at database migrations. Here are some notes I made at some point that might help.
