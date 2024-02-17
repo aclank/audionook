@@ -1,0 +1,18 @@
+version: '3'
+services:
+  audionook:
+    image: aclank/audionook:latest
+    container_name: audionook
+    environment:
+      WATCHFILES_FORCE_POLLING: true
+      SECRET_KEY: ${SECRET_KEY}
+      WIKI_USER_AGENT: ${WIKI_USER_AGENT}
+    volumes:
+      - /path/to/audiobooks:/app/stacks
+      # Optional Mounts for data persistence
+      - /path/to/db:/app/db
+      - /path/to/logs:/app/logs
+      # Optional .txt file with preselected ISBNs to help gather metadata
+      - /ath/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
+    ports:
+      - public-port:80
