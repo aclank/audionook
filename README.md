@@ -16,7 +16,7 @@ There will be an Android app for accessing the server which allows for offline l
 ## Deployment
 The Docker image can be found [here](https://hub.docker.com/r/aclank/audionook) (in the future)
 
-I like to host it in portainer with a compose file like this:<br/>- Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
+I like to host it in [Portainer (install guide)](https://docs.portainer.io/start/install-ce/server/docker/linux) with a compose file like this:<br/>- Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
 
 ```yaml
 version: '3'
@@ -33,8 +33,9 @@ services:
       # Optional Mounts for data persistence
       - /path/to/db:/app/db
       - /path/to/logs:/app/logs
-      # Optional .txt file with preselected ISBNs to help gather metadata
-      - /ath/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
+      # Optional .txt file with preselected ISBNs to help gather metadata. Could already exist in
+      # /path/to/audiobooks folder rather than directly linking like this.
+      - /path/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
     ports:
       - public-port:80
 ```
@@ -46,6 +47,8 @@ The available environment variables are:
 | SECRET_KEY | A key for the SQLite database. Has no default. |
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs. | 
 | WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this<br/>(The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/>`<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+
+Be sure to change the `/path/to/<things>` for wherever your audiobooks are stored locally and where you would like to persist the database ect. The only one you have to have is the first for audiobooks, the rest are optional. Also be sure to update the `public-port` and pick a free port to host the app on. Perhaps 33000 for example.
 
 If not using Portainers stacks and environment variable features then replace the ${VARIABLES} with your values directly.
 
@@ -173,7 +176,8 @@ services:
       # Optional Mounts for data persitence
       - /path/to/db/dev:/app/db
       - /path/to/logs/dev:/app/logs
-      # Optional txt file with preselected ISBNs to help gather metadata
+      # Optional .txt file with preselected ISBNs to help gather metadata. Could already exist in
+      # /path/to/audiobooks folder rather than directly linking like this.
       - /path/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
       # Required extra mounts for dev container
       # scrivapi
