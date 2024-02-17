@@ -16,27 +16,27 @@ There will be an Android app for accessing the server which allows for offline l
 ## Deployment
 The Docker image can be found [here](https://hub.docker.com/r/aclank/audionook) (in the future)
 
-I like to host it in portainer with a compose file like this:
+I like to host it in portainer with a compose file like this:<br/>Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
 
 ```yaml
 version: '3'
 services:
   audionook:
-      image: aclank/audionook:latest
-      container_name: audionook
-      environment:
-        WATCHFILES_FORCE_POLLING: true
-        SECRET_KEY: ${SECRET_KEY}
-        WIKI_USER_AGENT: ${WIKI_USER_AGENT}
-      volumes:
-        - /path/to/audiobooks:/app/stacks
-        # Optional Mounts for data persistence
-        - /path/to/db:/app/db
-        - /path/to/logs:/app/logs
-        # Optional .txt file with preselected ISBNs to help gather metadata
-        - /path/to/isbnoverrides.txt:/app/stacks/isbnoverrides.txt
-      ports:
-        - public-port:80
+    image: aclank/audionook:latest
+    container_name: audionook
+    environment:
+      WATCHFILES_FORCE_POLLING: true
+      SECRET_KEY: ${SECRET_KEY}
+      WIKI_USER_AGENT: ${WIKI_USER_AGENT}
+    volumes:
+      - /path/to/audiobooks:/app/stacks
+      # Optional Mounts for data persistence
+      - /path/to/db:/app/db
+      - /path/to/logs:/app/logs
+      # Optional .txt file with preselected ISBNs to help gather metadata
+      - /ath/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
+    ports:
+      - public-port:80
 ```
 
 The available environment variables are:
@@ -47,7 +47,7 @@ The available environment variables are:
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs. | 
 | WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
 
-If not using portainer's stacks and environment variable syntax then replace the ${VARIABLES} with your values directly.
+If not using portainer's stacks and environment variable stuff then replace the ${VARIABLES} with your values directly.
 
 Once the docker container is running you can checkout the website at `http://localhost:public-port`
 
@@ -154,7 +154,7 @@ poetry shell
 
 - \+ Add an environment variable * 3 `SECRET_KEY`, `WIKI_USER_AGENT`, `ENVIRON_LOGLEVEL`
 
-- For the dev stack to work you need to mount many extra things in the yaml file: 
+- For the dev stack to work you need to mount many extra things in the yaml file: <br/> Code here is possibly out of date. Refer to: [docker-compose-dev.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose-dev.yml)
 
 ```yaml
 version: '3'
@@ -166,15 +166,15 @@ services:
       WATCHFILES_FORCE_POLLING: true
       SECRET_KEY: ${SECRET_KEY}
       WIKI_USER_AGENT: ${WIKI_USER_AGENT}
-      ENVIRON: ${ENVIRON}
       ENVIRON_LOGLEVEL: ${ENVIRON_LOGLEVEL}
+      ENVIRON: ${ENVIRON}
     volumes:
       - /path/to/audiobooks:/app/stacks
       # Optional Mounts for data persitence
       - /path/to/db/dev:/app/db
       - /path/to/logs/dev:/app/logs
       # Optional txt file with preselected ISBNs to help gather metadata
-      - /path/to/isbnoverrides.txt:/app/stacks/isbnoverrides.txt
+      - /path/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
       # Required extra mounts for dev container
       # scrivapi
       - /path/to/repo/src:/app/src
