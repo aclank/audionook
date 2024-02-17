@@ -204,16 +204,16 @@ I am terrible at database migrations. Here are some notes I made at some point t
 
 [Jeff Astor page I referenced a bunch](https://www.jeffastor.com/blog/pairing-a-postgresql-db-with-your-dockerized-fastapi-app/)
 
-`sudo docker exec -it <container_name> bash`
+- `sudo docker exec -it <container_name> bash`
 
-`alembic revision -m "create_main_tables"`
+- `alembic revision -m "create_main_tables"`
 
-This will make a file in `./src/db/migrations/versions/####_"whatever_was_in_quotes".py` for creating the main tables.
+- This will make a file in `./src/db/migrations/versions/####_"whatever_was_in_quotes".py` for creating the main tables.
 
-Add stuff in there
+- Add stuff in there
 
-`alembic upgrade head`<br/>
-`alembic downgrade head`
+- `alembic upgrade head`<br/>
+- `alembic downgrade head`
 
 ## Public Access
 Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of doing that. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
