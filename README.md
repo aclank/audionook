@@ -47,7 +47,7 @@ The available environment variables are:
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs. | 
 | WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this<br/>(The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/>`<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
 
-If not using portainer's stacks and environment variable stuff then replace the ${VARIABLES} with your values directly.
+If not using Portainers stacks and environment variable features then replace the ${VARIABLES} with your values directly.
 
 Once the docker container is running you can checkout the website at `http://localhost:public-port`
 
