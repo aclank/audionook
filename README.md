@@ -114,8 +114,12 @@ The docker environment variable `ENVIRON_LOGLEVEL` can be set to either `info` (
 Consider keeping an eye on the `audionook-access.log` if you enable access to this server from outside your home network. If you see attempts to access the site that you don't like, consider investigating firewalls or some other security for your network. Exposing ports can be dangerous and I'm no security expert. Be safe.
 
 
+<br/>
+
 <h1 align="center">Development</h1>
 This is just how I like to build and deploy the server locally while I work and is as much a reference for myself as anything. Feel free to do it differently.
+
+<br/>
 
 ## Generate docker images and deploy compose files on portainer
 
