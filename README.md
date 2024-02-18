@@ -7,7 +7,7 @@
 <img alt="Logo Banner" src="https://raw.githubusercontent.com/aclank/audionook/main/web/flutter/assets/images/home_logo.png"/>
 
 ## About this project
-This project aims to be a free audiobook manager, server, and player similar to apps like Jellyfin or Plex. This repository will contain all the code for Audionook. [I'm](https://github.com/aclank) a solo dev who has been working on this project on and off (mostly off) since around the end of 2018 and I'm teaching myself as I go.<br/>As a result it may not work for everyone and may be unstable.
+This project aims to be a free audiobook manager, server, and player similar to apps like Jellyfin or Plex. This repository will contain all the code for Audionook. I'm a solo dev who has been working on this project on and off (mostly off) since around the end of 2018 and I'm teaching myself as I go.<br/>As a result it may not work for everyone and may be unstable.
 
 This project is meant to be hosted through docker. The docker image runs an [NGINX](https://www.nginx.com/) webserver to serve out the UI which is written in [Dart](https://dart.dev/) and  [Flutter](https://flutter.dev/), a backend api which is written in Python with [FastApi](https://fastapi.tiangolo.com/), and the data is stored in an [SQLite](https://www.sqlite.org/index.html) databse. I've played around with a various options for each of these aspects of the project and landed on this architecture for reasons, but I'm always open to other solutions!
 
