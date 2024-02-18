@@ -377,9 +377,13 @@ I'm still working on the api so I will update this section to be more in depth s
 ## SQLite
 I've been using SQLite for most of the life of this project. I played around with [PostgreSQL](https://www.postgresql.org/) for a while but decided to go back to SQLite because it makes having a single docker image simpler to manage. 
 
-## Tools and links that help me with development
+<br/>
+<br/>
 
-### Tools
+<h1 align="center">Tools and links that help me with development</h1>
+Here are some extra links for things I found helpful along the way.
+
+## Tools
 
 [GitKraken](https://www.gitkraken.com/)
 <br/>
@@ -393,7 +397,7 @@ A very handy tool for testing the api routes.
 <br/>
 A useful tool for inspecting the SQLite database through a gui so I never have to learn actual SQL commands.
 
-### Reference pages
+## Reference pages
 
 [PyEnv & Poetry from Matt Cale](https://dev.to/mattcale/pyenv-poetry-bffs-20k6)
 <br/>
@@ -411,11 +415,22 @@ Tutorial for getting started with FastApi from Jeff Astor
 <br/>
 Setting up NPM
 
-[Marius Hosting](https://mariushosting.com/)
-<br/>
-For pretty much anything Docker/ Synology related.
-
 [Database Queries with SQLAlchemy](https://hackersandslackers.com/database-queries-sqlalchemy-orm/)
 <br/>
 Reference page for creating SQL queries with SQLAlchely
 
+[Marius Hosting](https://mariushosting.com/)
+<br/>
+For pretty much anything Docker/ Synology related.
+
+[SpaceRex](https://www.youtube.com/@SpaceRexWill)
+<br/>
+Another great resource for Docker/ local hosting.
+
+[WunderTech](https://www.youtube.com/@WunderTechTutorials)
+<br/>
+Another great resource for Docker/ local hosting.
+
+[Vandad Nahavandipoor](https://www.youtube.com/c/VandadNP)
+<br/>
+Longer Flutter tutorials
