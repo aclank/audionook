@@ -155,13 +155,13 @@ poetry shell
 
 - Do some awesome work on the project.
 
-- `make tarball-dev` (or prod)
+- `make tarball-dev` (or `make tarball`)
 
 - In Portainer -> Images -> Build a new image -> Upload
 
-- Set the container name `your/container_name`
+- Set the image name `<your>/<image_name>`. 
 
-- Select file (`audionook_dev.tar` was generated in the `./docker` folder from the make command)
+- Select file (`audionook_dev.tar` was generated in the `./docker` folder from the `make` command)
 
 - Build the image<br/>- sometimes I have to build the prod image twice because it'll fail with: `Unexpected token '&lt;', "[&lt;!DOCTYPE "... is not valid JSON`
 
@@ -220,17 +220,17 @@ If you dont like using compose to manage your containers then there are [Makefil
 
 ```make
 docker-run:
-	@docker build -f docker/Dockerfile -t aclank/audionook .
+	@docker build -f docker/Dockerfile -t <your>/<image_name> .
 	@docker run --rm --name audionook \
 	-p 33000:80 \
 	--env-file docker/.env \
 	-v $(shell pwd)/../stacks:/app/stacks \
 	-v $(shell pwd)/db/prod:/app/db \
 	-v $(shell pwd)/logs/prod:/app/logs \
-	aclank/audionook
+	<your>/<image_name>
 
 docker-run-dev:
-	@docker build -f docker/Dockerfile-dev -t aclank/audionook_dev .
+	@docker build -f docker/Dockerfile-dev -t <your>/<image_name_dev> .
 	@docker run --rm --name audionook_dev \
 	-p 32999:80 \
 	-v $(shell pwd)/../stacks:/app/stacks \
@@ -246,7 +246,7 @@ docker-run-dev:
 	-v $(shell pwd)/web/nginx/sites-enabled:/etc/nginx/sites-enabled \
 	-v $(shell pwd)/web/flutter/build/web:/var/www/audionook \
 	-v $(shell pwd)/web/html:/var/www/default \
-	aclank/audionook_dev
+	<your>/<image_name_dev>
 ```
 
 - Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of the `./bin/run_dev.sh` file, but for the production build they are sourced in the `docker run` command. Normally for the production build I would expect users to set the vars manually with a `-e VAR=value \` line perhaps when not using the compose method.
