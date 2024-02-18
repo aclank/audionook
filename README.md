@@ -68,7 +68,6 @@ You can supply an `author-_-Author Name.jpg` and `cover-_-Book Title.jpg` in the
 
 Here is an example folder structure
 
-TODO re-write this without using Brandon Sandersons work as the example.
 ```
 Brandon Sanderson
   - author-_-Brandon Sanderson.jpg
@@ -177,7 +176,7 @@ poetry shell
 
 - Do some awesome work on the project.
 
-## Generate Docker images and deploy compose files on Portainer
+## Generate Docker images and deploy compose files with Portainer
 
 [docker files](https://github.com/aclank/audionook/blob/main/docker)
 
