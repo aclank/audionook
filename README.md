@@ -25,7 +25,6 @@ services:
     image: aclank/audionook:latest
     container_name: audionook
     environment:
-      WATCHFILES_FORCE_POLLING: true
       SECRET_KEY: ${SECRET_KEY}
       WIKI_USER_AGENT: ${WIKI_USER_AGENT}
     volumes:
@@ -179,7 +178,6 @@ services:
     image: <your>/<image_name>:latest
     container_name: audionook_dev
     environment:
-      WATCHFILES_FORCE_POLLING: true
       SECRET_KEY: ${SECRET_KEY}
       WIKI_USER_AGENT: ${WIKI_USER_AGENT}
       ENVIRON_LOGLEVEL: ${ENVIRON_LOGLEVEL}
@@ -216,6 +214,45 @@ services:
 
 - Note - `./bin/run_dev.sh` tries to source the `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
 
+---
+
+If you dont like using compose files there are also [Makefile commands](https://github.com/aclank/audionook/blob/main/Makefile) for building and starting the docker container. Some examples:
+
+```make
+docker-run:
+	@docker build -f docker/Dockerfile -t aclank/audionook .
+	@docker run --rm --name audionook \
+	-p 33000:80 \
+	--env-file docker/.env \
+	-v $(shell pwd)/../stacks:/app/stacks \
+	-v $(shell pwd)/db/prod:/app/db \
+	-v $(shell pwd)/logs/prod:/app/logs \
+	aclank/audionook
+
+docker-run-dev:
+	@docker build -f docker/Dockerfile-dev -t aclank/audionook_dev .
+	@docker run --rm --name audionook_dev \
+	-p 32999:80 \
+	-v $(shell pwd)/../stacks:/app/stacks \
+	-v $(shell pwd)/db/dev:/app/db \
+	-v $(shell pwd)/logs/dev:/app/logs \
+	-v $(shell pwd)/src:/app/src \
+	-v $(shell pwd)/bin/run_dev.sh:/app/bin/run_dev.sh \
+	-v $(shell pwd)/bin/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf \
+	-v $(shell pwd)/docker/dev.env:/app/bin/.env \
+	-v $(shell pwd)/web/nginx/nginx.conf:/etc/nginx/nginx.conf \
+	-v $(shell pwd)/web/nginx/error-modules:/etc/nginx/error-modules \
+	-v $(shell pwd)/web/nginx/sites-available/audionook-dev.conf:/etc/nginx/sites-available/default \
+	-v $(shell pwd)/web/nginx/sites-enabled:/etc/nginx/sites-enabled \
+	-v $(shell pwd)/web/flutter/build/web:/var/www/audionook \
+	-v $(shell pwd)/web/html:/var/www/default \
+	aclank/audionook_dev
+```
+
+- Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of the `./bin/run_dev.sh` file, but for the production build they are sourced in the `docker run` command. Normally for the production build I would expect users to set the vars manually with a `-e VAR=value \` line perhaps when not using the compose method.
+
+Hopefully these examples are enough to get someone started working on the project.
+
 ## Alembic Database Migrations
 I am terrible at database migrations. Here are some notes I made at some point that might help.
 
@@ -227,12 +264,12 @@ I am terrible at database migrations. Here are some notes I made at some point t
 
 - This will make a file in `./src/db/migrations/versions/####_"whatever_was_in_quotes".py` for creating the main tables.
 
-- Add stuff in there
+- Add some migration stuff to the .py file.
 
 - `alembic upgrade head`<br/>
 - `alembic downgrade head`
 
 ## Public Access
-Port foward your `<public-port>` on your router. If you own a domain name you could setup a [reverse proxy](https://nginxproxymanager.com/) in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of doing that. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
+Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy ([I like NPM](https://nginxproxymanager.com/)) in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of handling ssl would be good to do. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
 
 You could perhaps set the public port on the docker container to 80 and not need to specify a `:<public-port>` in your public url but I don't think I would recommend that, it seems unsafe and you would still need to forward port 80 on your router. Using a reverse proxy which can handle ssl and forward to another port (the `<public-port>` you set) on your home network seems at least slightly safer. Either way **proceed at your own risk**.
