@@ -249,7 +249,7 @@ docker-run-dev:
 	<your>/<image_name_dev>
 ```
 
-- Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of the `./bin/run_dev.sh` file, but for the production build they are sourced in the `docker run` command with `--env-file docker/.env`. You could also set environment vars manually with `-e VAR=value \` lines between the `-p` and `-v` flags.
+- Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of `./bin/run_dev.sh`, but for the production build they are sourced in the `docker run` command with `--env-file docker/.env`. You could also set environment vars manually with `-e VAR=value \` lines between the `-p` and `-v` flags but I prefer to keep them in a .env file so that at least the `SESCRET_KEY` is slightly obscured.
 
 Hopefully these examples are enough to get someone started working on the project.
 
