@@ -249,7 +249,7 @@ docker-run-dev:
 	<your>/<image_name_dev>
 ```
 
-- Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of the `./bin/run_dev.sh` file, but for the production build they are sourced in the `docker run` command. Normally for the production build I would expect users to set the vars manually with a `-e VAR=value \` line perhaps when not using the compose method.
+- Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of the `./bin/run_dev.sh` file, but for the production build they are sourced in the `docker run` command with `--env-file docker/.env`. You could also set environment vars manually with `-e VAR=value \` lines between the `-p` and `-v` flags.
 
 Hopefully these examples are enough to get someone started working on the project.
 
