@@ -121,7 +121,7 @@ This is just how I like to build and deploy the server locally while I work and 
 
 <br/>
 
-## Generate docker images and deploy compose files on portainer
+## Prep local environmant
 
 - Download the repo.
 
@@ -164,6 +164,8 @@ poetry shell
 ```
 
 - Do some awesome work on the project.
+
+## Generate Docker images and deploy compose files on Portainer
 
 - `make tarball-dev` (or `make tarball`)
 
@@ -224,7 +226,7 @@ services:
 
 - Note - `./bin/run_dev.sh` tries to source the `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
 
-## Generate and run docker images
+## Generate Docker image and run container
 
 If you dont like using compose to manage your containers then there are [Makefile commands](https://github.com/aclank/audionook/blob/main/Makefile) for building and starting the docker container that way. Some examples:
 
