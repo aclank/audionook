@@ -7,9 +7,9 @@
 <img alt="Logo Banner" src="https://raw.githubusercontent.com/aclank/audionook/main/web/flutter/assets/images/home_logo.png"/>
 
 ## About this project
-This project aims to be a free audiobook manager, server, and player similar to apps like Jellyfin or Plex. This repository will contain all the code for Audionook. I'm a solo dev who has been working on this as a passion project for a while and I'm teaching myself as I go. As a result it may not work for everyone and may be unstable.
+This project aims to be a free audiobook manager, server, and player similar to apps like Jellyfin or Plex. This repository will contain all the code for Audionook. [I'm](https://github.com/aclank) a solo dev who has been working on this project on and off (mostly off) since around the end of 2018 and I'm teaching myself as I go.<br/>As a result it may not work for everyone and may be unstable.
 
-This app is meant to be hosted through docker. The docker image runs an nginx webserver to serve out the UI which is written in flutter, a backend api which is written in Python with FastApi, and the data is stored in an SQLite databse.
+This project is meant to be hosted through docker. The docker image runs an [NGINX](https://www.nginx.com/) webserver to serve out the UI which is written in [Dart](https://dart.dev/) and  [Flutter](https://flutter.dev/), a backend api which is written in Python with [FastApi](https://fastapi.tiangolo.com/), and the data is stored in an [SQLite](https://www.sqlite.org/index.html) databse. I've played around with a various options for each of these aspects of the project and landed on this architecture for reasons, but I'm always open to other solutions!
 
 There will be an Android app for accessing the server which allows for offline listening. Currently I have no plans to develop an app for IOS.
 
@@ -121,7 +121,13 @@ This is just how I like to build and deploy the server locally while I work and 
 
 - Download the repo.
 
-- Setup and start a python venv or use something like poetry.
+- I use [Android Studio](https://developer.android.com/studio) to get android emulators installed.
+
+- I think [VSCode](https://code.visualstudio.com/) usually helps me install things for [Flutter](https://docs.flutter.dev/get-started/install/windows/mobile?tab=vscode).
+
+- Make sure Python3 is installed (I'm using 3.11.0 at the moment), I like to use [pyenv](https://github.com/pyenv/pyenv) for that.
+
+- Setup and start a python venv or use something like [Poetry](https://github.com/python-poetry/poetry).
 
 - For python's venv:
 
