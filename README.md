@@ -45,7 +45,7 @@ The available environment variables are:
 | Key | Description |
 | --- | --- |
 | SECRET_KEY | A key for the SQLite database. Has no default. |
-| ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the logs. | 
+| ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the fastapi logs. | 
 | WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this<br/>(The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/>`<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
 
 Be sure to change the `/path/to/<things>` for wherever your audiobooks are stored locally and where you would like to persist the database ect. The only one you have to have is the first for audiobooks, the rest are optional. Also be sure to update the `public-port` and pick a free port to host the app on. Perhaps 33000 for example.
@@ -101,6 +101,19 @@ Brandon Sanderson
 This would have 6 unique versions for 5 different books. Some of the books are part of a series (Mistborn Era One) which is itself part of a series (Mistborn) while some books are standalone (Warbreaker)
 
 The app requires this folder structure so that the books can be organized by author and series which is a way I strongly prefer to browse my library over other audiobook managers I've tried which put books into a long list and that's it. 
+
+## Database file
+This app currently uses an SQLite .db file to store information about the books in your library and users login info and watch history. *I am not a security expert* so please don't re-use passwords from other accounts with this app. If you aren't using a password manager, start using one. I like [BitWarden](https://bitwarden.com/) at the moment.
+
+You can persist the database by mounting a directory to `/app/db`. Please be careful of messing with the `tolemledger.db` that gets created. If anything breaks locally with your database I find it quite difficult to diagnose/ fix issues and database migrations are a headache. I have lost listening history by messing with these files. That said, I like to use [this](https://sqlitebrowser.org/dl/) app for browsing the .db file through a gui. If you are comfortable with sqlite commands from a CLI that's also an option. 
+
+## Log Files
+You can mount a folder to `/app/logs` if you want to see the logs from nginx and fastapi. You should get a folder for each and should mainly see output in `audionook-access.log` and `audionook-error.log` from nginx, and in `scrivapi.log` from fastapi. These logs should also be getting sent to docker either way.
+
+The docker environment variable `ENVIRON_LOGLEVEL` can be set to either `info` (default) or `debug` which will effect how much fastapi puts into its log file.
+
+Consider keeping an eye on the `audionook-access.log` if you enable access to this server from outside your home network. If you see attempts to access the site that you don't like, consider investigating firewalls or some other security for your network. Exposing ports can be dangerous and I'm no security expert. Be safe.
+
 
 <h1 align="center">Development</h1>
 This is just how I like to build and deploy the server locally while I work and is as much a reference for myself as anything. Feel free to do it differently.
@@ -183,12 +196,12 @@ services:
       # scrivapi
       - /path/to/repo/src:/app/src
       - /path/to/repo/bin/run_dev.sh:/app/bin/run_dev.sh
-      - /path/to/repo/bin/dev-supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
-      - /path/to/repo/docker/.env:/app/bin/.env
+      - /path/to/repo/bin/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf
+      - /path/to/repo/docker/dev.env:/app/bin/.env
       # nginx
       - /path/to/repo/web/nginx/nginx.conf:/etc/nginx/nginx.conf
       - /path/to/repo/web/nginx/error-modules:/etc/nginx/error-modules
-      - /path/to/repo/web/nginx/sites-available/dev-audionook.conf:/etc/nginx/sites-available/default
+      - /path/to/repo/web/nginx/sites-available/audionook-dev.conf:/etc/nginx/sites-available/default
       - /path/to/repo/web/nginx/sites-enabled:/etc/nginx/sites-enabled
       # web
       - /path/to/repo/web/flutter/build/web:/var/www/audionook
@@ -220,4 +233,6 @@ I am terrible at database migrations. Here are some notes I made at some point t
 - `alembic downgrade head`
 
 ## Public Access
-Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of doing that. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
+Port foward your `<public-port>` on your router. If you own a domain name you could setup a [reverse proxy](https://nginxproxymanager.com/) in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of doing that. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
+
+You could perhaps set the public port on the docker container to 80 and not need to specify a `:<public-port>` in your public url but I don't think I would recommend that, it seems unsafe and you would still need to forward port 80 on your router. Using a reverse proxy which can handle ssl and forward to another port (the `<public-port>` you set) on your home network seems at least slightly safer. Either way **proceed at your own risk**.
