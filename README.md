@@ -214,9 +214,9 @@ services:
 
 - Note - `./bin/run_dev.sh` tries to source the `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
 
----
+## Generate and run docker images
 
-If you dont like using compose files there are also [Makefile commands](https://github.com/aclank/audionook/blob/main/Makefile) for building and starting the docker container. Some examples:
+If you dont like using compose to manage your containers then there are [Makefile commands](https://github.com/aclank/audionook/blob/main/Makefile) for building and starting the docker container that way. Some examples:
 
 ```make
 docker-run:
