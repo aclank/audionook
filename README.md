@@ -16,7 +16,9 @@ There will be an Android app for accessing the server which allows for offline l
 ## Deployment
 The Docker image can be found [here](https://hub.docker.com/r/aclank/audionook) (in the future)
 
-I like to host it in [Portainer (install guide)](https://docs.portainer.io/start/install-ce/server/docker/linux) with a compose file like this:<br/>- Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
+I like to host it in [Portainer (install guide)](https://docs.portainer.io/start/install-ce/server/docker/linux) with a compose file like this:
+<br/>
+\- Code here is possibly out of date. Refer to: [docker-compose.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose.yml)
 
 ```yaml
 version: '3'
@@ -45,7 +47,7 @@ The available environment variables are:
 | --- | --- |
 | SECRET_KEY | A key for the SQLite database. Has no default. |
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the fastapi logs. | 
-| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this<br/>(The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/>`<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
 
 Be sure to change the `/path/to/<things>` for wherever your audiobooks are stored locally and where you would like to persist the database ect. The only one you have to have is the first for audiobooks, the rest are optional. Also be sure to update the `public-port` and pick a free port to host the app on. Perhaps 33000 for example.
 
@@ -101,23 +103,33 @@ This would have 6 unique versions for 5 different books. Some of the books are p
 
 The app requires this folder structure so that the books can be organized by author and series which is a way I strongly prefer to browse my library over other audiobook managers I've tried which put books into a long list and that's it. 
 
+## Public Access
+Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy ([I like NPM](https://nginxproxymanager.com/)) in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of handling ssl would be good to do. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
+
+You could perhaps set the public port on the docker container to 80 and not need to specify a `:<public-port>` in your public url but I don't think I would recommend that, it seems unsafe and you would still need to forward port 80 on your router. Using a reverse proxy which can handle ssl and forward to another port (the `<public-port>` you set) on your home network seems at least slightly safer.
+
+Either way **proceed at your own risk**.
+
 ## Database file
 This app currently uses an SQLite .db file to store information about the books in your library and users login info and watch history. *I am not a security expert* so please don't re-use passwords from other accounts with this app. If you aren't using a password manager, start using one. I like [BitWarden](https://bitwarden.com/) at the moment.
 
 You can persist the database by mounting a directory to `/app/db`. Please be careful of messing with the `tolemledger.db` that gets created. If anything breaks locally with your database I find it quite difficult to diagnose/ fix issues and database migrations are a headache. I have lost listening history by messing with these files. That said, I like to use [this](https://sqlitebrowser.org/dl/) app for browsing the .db file through a gui. If you are comfortable with sqlite commands from a CLI that's also an option. 
 
 ## Log Files
+
+[fastapi log config](https://github.com/aclank/audionook/blob/main/src/info-logs.ini)
+
 You can mount a folder to `/app/logs` if you want to see the logs from nginx and fastapi. You should get a folder for each and should mainly see output in `audionook-access.log` and `audionook-error.log` from nginx, and in `scrivapi.log` from fastapi. These logs should also be getting sent to docker either way.
 
 The docker environment variable `ENVIRON_LOGLEVEL` can be set to either `info` (default) or `debug` which will effect how much fastapi puts into its log file.
 
 Consider keeping an eye on the `audionook-access.log` if you enable access to this server from outside your home network. If you see attempts to access the site that you don't like, consider investigating firewalls or some other security for your network. Exposing ports can be dangerous and I'm no security expert. Be safe.
 
-
+<br/>
 <br/>
 
 <h1 align="center">Development</h1>
-This is just how I like to build and deploy the server locally while I work and is as much a reference for myself as anything. Feel free to do it differently.
+This is how I like to build and deploy the server locally while I work and is as much a reference for myself as anything. Feel free to do it differently.
 
 <br/>
 
@@ -125,9 +137,9 @@ This is just how I like to build and deploy the server locally while I work and 
 
 - Download the repo.
 
-- I use [Android Studio](https://developer.android.com/studio) to get android emulators installed.
+- I use [Android Studio](https://developer.android.com/studio) to get Android emulators installed.
 
-- I think [VSCode](https://code.visualstudio.com/) usually helps me install things for [Flutter](https://docs.flutter.dev/get-started/install/windows/mobile?tab=vscode).
+- I think [VS Code](https://code.visualstudio.com/) usually helps me install things for [Flutter](https://docs.flutter.dev/get-started/install/windows/mobile?tab=vscode).
 
 - Make sure Python3 is installed (I'm using 3.11.0 at the moment), I like to use [pyenv](https://github.com/pyenv/pyenv) for that.
 
@@ -167,6 +179,8 @@ poetry shell
 
 ## Generate Docker images and deploy compose files on Portainer
 
+[docker files](https://github.com/aclank/audionook/blob/main/docker)
+
 - `make tarball-dev` (or `make tarball`)
 
 - In Portainer -> Images -> Build a new image -> Upload
@@ -175,13 +189,17 @@ poetry shell
 
 - Select file (`audionook_dev.tar` was generated in the `./docker` folder from the `make` command)
 
-- Build the image<br/>- sometimes I have to build the prod image twice because it'll fail with: `Unexpected token '&lt;', "[&lt;!DOCTYPE "... is not valid JSON`
+- Build the image
+<br/>
+Note - Sometimes I have to build the prod image twice because it'll fail with: `Unexpected token '&lt;', "[&lt;!DOCTYPE "... is not valid JSON`
 
 - In Portainer -> Stacks -> Add stack -> copy/ paste `docker-compose-dev.yml`
 
 - \+ Add an environment variable * 3 `SECRET_KEY`, `WIKI_USER_AGENT`, `ENVIRON_LOGLEVEL`
 
-- For the dev stack to work you need to mount many extra things in the yaml file: <br/>- Code here is possibly out of date. Refer to: [docker-compose-dev.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose-dev.yml)
+- For the dev stack to work you need to mount many extra things in the yaml file:
+<br/>
+\- Code here is possibly out of date. Refer to: [docker-compose-dev.yml](https://github.com/aclank/audionook/blob/main/docker/docker-compose-dev.yml)
 
 ```yaml
 version: '3'
@@ -281,7 +299,123 @@ I am terrible at database migrations. Here are some notes I made at some point t
 - `alembic upgrade head`<br/>
 - `alembic downgrade head`
 
-## Public Access
-Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy ([I like NPM](https://nginxproxymanager.com/)) in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of handling ssl would be good to do. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
 
-You could perhaps set the public port on the docker container to 80 and not need to specify a `:<public-port>` in your public url but I don't think I would recommend that, it seems unsafe and you would still need to forward port 80 on your router. Using a reverse proxy which can handle ssl and forward to another port (the `<public-port>` you set) on your home network seems at least slightly safer. Either way **proceed at your own risk**.
+<br/>
+<br/>
+
+<h1 align="center">Project Architecture</h1>
+Here I'll try and go into how different parts of the project are structured and maybe why I've made certain decisions about things.
+
+<br/> 
+Some of the links below will be broken until I get all my files onto github soon tm.
+
+<br/>
+
+## NGINX
+
+[web/nginx](https://github.com/aclank/audionook/blob/main/web/nginx)
+
+The main internal port for the container is port 80 which is watched by an NGINX Webserver. Most of the config for this can be found in [web/nginx/sites-available/audionook.conf](https://github.com/aclank/audionook/blob/main/web/nginx/sites-available/audionook.conf)
+
+### Locations:
+- `= /` Traffic for `http://local-ip/` gets directed into [web/flutter/build/web](https://github.com/aclank/audionook/blob/main/web/flutter/build/web)
+
+- `~ default_favicon.ico` hopefully I can figure out why the [HTML error pages](https://github.com/aclank/audionook/blob/main/web/html) seem to need this location block to exist but for now this ones to force the favicon.ico to show up.
+
+There are a few manual locations that need to be proxy_passed to FastApi.
+- `/scrivapi` most of the backend traffic happens here and is proxy_passed to `http://localhost:8008` which fastapi is watching
+- `/health` is just a page to check if the app is running. If this location works then both nginx and fastapi need to be running so it helps confirm nothing is super broken
+- `/stacks` is where all the media gets served from. It requires /auth through the api before serving anything.
+
+The dev build gets a few extra locations for the FastApi docs pages.
+- `/docs`
+- `/redoc`
+- `= /openapi.json` also seems to be required for the swagger page (`/docs`)
+
+In the past I used Apache2 but at some point I switched to NGINX and don't remember if there was a specific reason. I enjoy working with NGINX's suite of tools.
+
+Fun fact, apparently its pronounced engine-x. Who knew.
+
+## Flutter
+
+[web/flutter](https://github.com/aclank/audionook/blob/main/web/flutter)
+
+I'm in the middle of re-building the front-end UI's after recently switching to FastApi so this is still in progress. In a perfect world I would have one flutter project for both the web and mobile apps but we'll see.
+
+### Dependencies
+
+- [Riverpod](https://pub.dev/packages/riverpod) - State management.
+
+- It's a single page app (SPA) so I am not using a router, though I have written [something](https://github.com/aclank/audionook/blob/main/web/flutter/lib/features/nav) akin to routing so that the user can navigate backwards. 
+
+- [just_audio](https://pub.dev/packages/just_audio) - Web and mobile audio playback.
+
+- [Drift](https://pub.dev/packages/drift) - Android local database fto enable offline browsing and playback on the Android app.
+
+The first iteration of this project was built in [Webix](https://webix.com/) but I preferred coding in dart and switched to it at some point.
+
+## FastApi
+
+[src/](https://github.com/aclank/audionook/blob/main/src)
+
+FastApi handles interactions between the UI and the SQLite database. I have recently re-built the backend api with FastApi instead of Flask which I was using before. I've been enjoying FastApi a lot.
+
+FastApi watches on port 8080 inside the container.
+
+[src/scrivapi/app.py](https://github.com/aclank/audionook/blob/main/src/scrivapi/app.py) is the entry point.
+
+### Dependencies 
+
+- [uvicorn](https://www.uvicorn.org/) - ASGI web server.
+
+- [SQLAlchemy](https://www.sqlalchemy.org/) - SQLite database interactions.
+
+- [OAuth2](https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/) - api authentication.
+
+I'm still working on the api so I will update this section to be more in depth soon once I am a bit further along.
+
+## SQLite
+I've been using SQLite for most of the life of this project. I played around with [PostgreSQL](https://www.postgresql.org/) for a while but decided to go back to SQLite because it makes having a single docker image simpler to manage. 
+
+## Tools and links that help me with development
+
+### Tools
+
+[GitKraken](https://www.gitkraken.com/)
+<br/>
+An awesome local git manager with a nice interface.
+
+[Postman](https://www.postman.com/)
+<br/>
+A very handy tool for testing the api routes.
+
+[SQLite Browser](https://sqlitebrowser.org)
+<br/>
+A useful tool for inspecting the SQLite database through a gui so I never have to learn actual SQL commands.
+
+### Reference pages
+
+[PyEnv & Poetry from Matt Cale](https://dev.to/mattcale/pyenv-poetry-bffs-20k6)
+<br/>
+For installing different python versions and setting up a virtual environment so vscode doesn't complain.
+
+[Android Asset Studio](https://romannurik.github.io/AndroidAssetStudio/)
+<br/>
+For generating Android app icons
+
+[Configuring a PostgreSQL DB with your Dockerized FastAPI App](https://www.jeffastor.com/blog/pairing-a-postgresql-db-with-your-dockerized-fastapi-app/)
+<br/>
+Tutorial for getting started with FastApi from Jeff Astor
+
+[NPM in Docker](https://www.blackvoid.club/nginx-proxy-manager/)
+<br/>
+Setting up NPM
+
+[Marius Hosting](https://mariushosting.com/)
+<br/>
+For pretty much anything Docker/ Synology related.
+
+[Database Queries with SQLAlchemy](https://hackersandslackers.com/database-queries-sqlalchemy-orm/)
+<br/>
+Reference page for creating SQL queries with SQLAlchely
+
