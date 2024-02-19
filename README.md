@@ -275,8 +275,8 @@ docker-run-dev:
 	-v $(shell pwd)/db/dev:/app/db \
 	-v $(shell pwd)/logs/dev:/app/logs \
 	-v $(shell pwd)/src:/app/src \
-	-v $(shell pwd)/bin/run_dev.sh:/app/bin/run_dev.sh \
-	-v $(shell pwd)/bin/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf \
+	-v $(shell pwd)/bin/run_dev.py:/app/bin/run_dev.py \
+	-v $(shell pwd)/bin/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf \
 	-v $(shell pwd)/docker/dev.env:/app/bin/.env \
 	-v $(shell pwd)/web/nginx/nginx.conf:/etc/nginx/nginx.conf \
 	-v $(shell pwd)/web/nginx/error-modules:/etc/nginx/error-modules \
@@ -287,7 +287,7 @@ docker-run-dev:
 	<your>/<image_name_dev>
 ```
 
-- Note - I'm currently using a `.env` file to source in the environment variables for the dev build inside of `./bin/run_dev.sh`, but for the production build they are sourced in the `docker run` command with `--env-file docker/.env`. You could also set environment vars manually with `-e VAR=value \` lines between the `-p` and `-v` flags but I prefer to keep them in a .env file so that at least the `SESCRET_KEY` is slightly obscured.
+- Note - I'm currently using a `.env` file to source in the environment variables inside of [/bin/run.py](https://github.com/aclank/audionook/blob/main/bin/run.py), but for they prioritize envrinment variables sourced by docker either with `--env-file docker/.env` in this case or environment: in the compose files. You could also set environment vars manually with `-e VAR=value \` lines between the `-p` and `-v` flags but I prefer to keep them in a `.env` file so that at least the `SESCRET_KEY` is slightly obscured.
 
 Hopefully these examples are enough to get someone started working on the project.
 
