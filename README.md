@@ -9,7 +9,7 @@
 ## About this project
 This project aims to be a free audiobook manager, server, and player similar to apps like Jellyfin or Plex. This repository will contain all the code for Audionook. I'm a solo dev who has been working on this project on and off (mostly off) since around the end of 2018 and I'm teaching myself as I go. As a result it may not work for everyone and may be unstable.
 
-This project is meant to be hosted through docker. The docker image runs an [NGINX](https://www.nginx.com/) webserver to serve out the UI which is written in [Dart](https://dart.dev/) and  [Flutter](https://flutter.dev/), a backend api which is written in Python with [FastApi](https://fastapi.tiangolo.com/), and the data is stored in an [SQLite](https://www.sqlite.org/index.html) databse. I've played around with a various options for each of these aspects of the project and landed on this architecture for reasons, but I'm always open to other solutions!
+This project is meant to be hosted through docker. The docker image runs an [NGINX](https://www.nginx.com/) webserver to serve out the UI which is written in [Dart](https://dart.dev/) and  [Flutter](https://flutter.dev/), a backend api which is written in Python with [FastApi](https://fastapi.tiangolo.com/), and the data is stored in an [SQLite](https://www.sqlite.org/index.html) database. I've played around with various options for each of these aspects of the project and landed on this architecture for reasons, but I'm always open to other solutions!
 
 There will be an Android app for accessing the server which allows for offline listening. Currently I have no plans to develop an app for IOS.
 
@@ -27,6 +27,7 @@ services:
     image: aclank/audionook:latest
     container_name: audionook
     environment:
+      TZ: <your>/<timezone>
       SECRET_KEY: ${SECRET_KEY}
       WIKI_USER_AGENT: ${WIKI_USER_AGENT}
     volumes:
@@ -48,6 +49,8 @@ The available environment variables are:
 | SECRET_KEY | A key for the SQLite database. Has no default. |
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the fastapi logs. | 
 | WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+
+[Time Zone Codes](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (Optional but recommended)
 
 Be sure to change the `/path/to/<things>` for wherever your audiobooks are stored locally and where you would like to persist the database ect. The only one you have to have is the first for audiobooks, the rest are optional. Also be sure to update the `public-port` and pick a free port to host the app on. Perhaps 33000 for example.
 
@@ -116,7 +119,7 @@ You can persist the database by mounting a directory to `/app/db`. Please be car
 
 ## Log Files
 
-[fastapi log config](https://github.com/aclank/audionook/blob/main/src/info-logs.ini)
+[fastapi log config](https://github.com/aclank/audionook/blob/main/src/config/info-logs.ini)
 
 You can mount a folder to `/app/logs` if you want to see the logs from nginx and fastapi. You should get a folder for each and should mainly see output in `audionook-access.log` and `audionook-error.log` from nginx, and in `scrivapi.log` from fastapi. These logs should also be getting sent to docker either way.
 
@@ -186,7 +189,7 @@ poetry shell
 
 - Set the image name `<your>/<image_name>`. 
 
-- Select file (`audionook_dev.tar` was generated in the `./docker` folder from the `make` command)
+- Select file (`audionook_dev.tar` was generated in the `/docker` folder from the `make` command)
 
 - Build the image
 <br/>
@@ -207,6 +210,7 @@ services:
     image: <your>/<image_name>:latest
     container_name: audionook_dev
     environment:
+      TZ: <your>/<timezone>
       SECRET_KEY: ${SECRET_KEY}
       WIKI_USER_AGENT: ${WIKI_USER_AGENT}
       ENVIRON_LOGLEVEL: ${ENVIRON_LOGLEVEL}
@@ -222,8 +226,7 @@ services:
       # Required extra mounts for dev container
       # scrivapi
       - /path/to/repo/src:/app/src
-      - /path/to/repo/bin/run_dev.sh:/app/bin/run_dev.sh
-      - /path/to/repo/bin/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf
+      - /path/to/repo/bin/run_dev.py:/app/bin/run.py
       - /path/to/repo/docker/dev.env:/app/bin/.env
       # nginx
       - /path/to/repo/web/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -233,19 +236,25 @@ services:
       # web
       - /path/to/repo/web/flutter/build/web:/var/www/audionook
       - /path/to/repo/web/html:/var/www/default
+      # startup
+      - /path/to/repo/bin/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf
     ports:
       - public-port:80
 ```
 
 - Update the stack
 
-- Note - There is an extra `ENVIRON` environment variable which can be `production` (default) or `dev` and turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking `./src/app.py` and `./web/nginx/sites-available/audionook.conf`
+- Note - There is an extra `ENVIRON` environment variable which can be `production` (default) or `dev` and turns off the fastapi docs pages when in production mode. Setting this var on a production build of the container will still not enable the docs page without tweaking [/src/app.py](https://github.com/aclank/audionook/blob/main/src/app.py) and [/web/nginx/sites-available/audionook.conf](https://github.com/aclank/audionook/blob/main/web/nginx/sites-available/audionook.conf)
 
-- Note - `./bin/run_dev.sh` tries to source the `./docker/.env` file but portainer vars seem to override whatever is in .env so it is only there for running the uvicorn server manually outside of docker (like with the `./bin/run_local.sh` or `./bin/run_local.bat` for example)
+- Note - [/bin/run.py](https://github.com/aclank/audionook/blob/main/bin/run.py) sources the [/docker/.env](https://github.com/aclank/audionook/blob/main/docker/template.env) file but skips if the envrionment variable has already been set. It is only there for running the uvicorn server manually outside of docker (like with the [/bin/run_local.py](https://github.com/aclank/audionook/blob/main/bin.run_local.py))
 
 ## Generate Docker image and run container
 
-If you dont like using compose to manage your containers then there are [Makefile commands](https://github.com/aclank/audionook/blob/main/Makefile) for building and starting the docker container that way. Some examples:
+If you dont like using compose to manage your containers then there are [Makefile commands](https://github.com/aclank/audionook/blob/main/Makefile) for building and starting the docker container that way.
+<br/>
+To use Makefile commands on Windows following [this](https://stackoverflow.com/questions/2532234/how-to-run-a-makefile-in-windows) or [this](https://www.reddit.com/user/lethinhrider/comments/1196bnx/how_to_install_and_use_chocolatey_to_install/) rabbit hole worked for me. Be careful about setting 'Execution-Policy's in general.
+
+Some examples:
 
 ```make
 docker-run:
@@ -291,7 +300,7 @@ I am terrible at database migrations. Here are some notes I made at some point t
 
 - `alembic revision -m "create_main_tables"`
 
-- This will make a file in `./src/db/migrations/versions/####_"whatever_was_in_quotes".py` for creating the main tables.
+- This will make a file in `/src/db/migrations/versions/####_"whatever_was_in_quotes".py` for creating the main tables.
 
 - Add some migration stuff to the .py file.
 
@@ -317,9 +326,9 @@ Some of the links below will be broken until I get all my files onto github soon
 The main internal port for the container is port 80 which is watched by an NGINX Webserver. Most of the config for this can be found in [web/nginx/sites-available/audionook.conf](https://github.com/aclank/audionook/blob/main/web/nginx/sites-available/audionook.conf)
 
 ### Locations:
-- `= /` Traffic for `http://local-ip/` gets directed into [web/flutter/build/web](https://github.com/aclank/audionook/blob/main/web/flutter/build/web)
+- `/` Traffic for `http://local-ip/` gets directed into [web/flutter/build/web](https://github.com/aclank/audionook/blob/main/web/flutter/build/web)
 
-- `~ default_favicon.ico` hopefully I can figure out why the [HTML error pages](https://github.com/aclank/audionook/blob/main/web/html) seem to need this location block to exist but for now this ones to force the favicon.ico to show up.
+- `~ favicon.ico` hopefully I can figure out why the [HTML error pages](https://github.com/aclank/audionook/blob/main/web/html) seem to need this location block to exist but for now this ones to force the favicon.ico to show up.
 
 There are a few manual locations that need to be proxy_passed to FastApi.
 - `/scrivapi` most of the backend traffic happens here and is proxy_passed to `http://localhost:8008` which fastapi is watching
@@ -433,3 +442,7 @@ Another great resource for Docker/ local hosting.
 [Vandad Nahavandipoor](https://www.youtube.com/c/VandadNP)
 <br/>
 Longer Flutter tutorials
+
+[FastApi and Uvicorn Logging](https://gist.github.com/liviaerxin/d320e33cbcddcc5df76dd92948e5be3b)
+<br/>
+Best resource I found for log handling with uvicorn
