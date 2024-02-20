@@ -78,6 +78,7 @@ Here is an example folder structure
 . # /path/to/audiobooks/
 └── Brandon Sanderson                                     # Author folder.
     ├── author-_-Brandon Sanderson.jpg                    # (Optional) Headshot of author.
+    │
     ├── series-_-Mistborn                                 # Series folder.
     │   │
     │   ├── series-_-01-_-Original Trilogy (Era One)      # Sub-series folder.
@@ -113,12 +114,12 @@ Here is an example folder structure
     │               ├── chapter_01.mp3                    # Audio files.
     │               └── chapter_02.mp3
     │
-    └────── book-_-Warbreaker                             # Book folder.
-            ├── cover-_-Warbreaker                        # (Optional) Cover art for book.
-            │
-            └── version-_-mp3_v01                         # Version folder.
-                ├── chapter_01.mp3                        # Audio files.
-                └── chapter_02.mp3
+    └── book-_-Warbreaker                                # Book folder.
+        ├── cover-_-Warbreaker                           # (Optional) Cover art for book.
+        │
+        └── version-_-mp3_v01                            # Version folder.
+            ├── chapter_01.mp3                           # Audio files.
+            └── chapter_02.mp3
 ```
 
 This would have 6 unique versions for 5 different books. Some of the books are part of a series (Mistborn Era One) which is itself part of a series (Mistborn) while some books are standalone (Warbreaker)
