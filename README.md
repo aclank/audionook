@@ -48,9 +48,10 @@ The available environment variables are:
 | --- | --- |
 | SECRET_KEY | A key for the SQLite database. Has no default. |
 | ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the fastapi logs. | 
-| WIKI_USER_AGENT | An optional http header for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+| WIKI_USER_AGENT | [An optional http header](https://meta.wikimedia.org/wiki/User-Agent_policy) for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+| TZ | [Time Zone Codes.](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) Optional but recommended. For now just effects timestamp in the logs. |
 
-[Time Zone Codes](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (Optional but recommended)
+
 
 Be sure to change the `/path/to/<things>` for wherever your audiobooks are stored locally and where you would like to persist the database ect. The only one you have to have is the first for audiobooks, the rest are optional. Also be sure to update the `public-port` and pick a free port to host the app on. Perhaps 33000 for example.
 
@@ -61,49 +62,70 @@ Once the docker container is running you can checkout the website at `http://loc
 Create an admin account and generate the library based off the books you supply. Start listening and enjoy!
 
 ## Library File Structure
-At the moment this app requires a quite strict folder structure for the audio files. At the top level are `Author Name` folders and inside there should be `book-_-num-_-Title` folders (num is optional)
+At the moment this app requires a quite strict folder structure for the audio files. At the top level are `Author Name` folders and inside there should be `book-_-num-_-Title` folders. Num is optional. `book-_-Title` would also be valid.
+
+`-_-` is used as a unique delimiter that I do not expect to ever be in a book or series title. Famous last words..
 
 You can have any number of `series-_-num-_-Book Title` folders (again num is optional) which contain the book folders. 
 
-Each book folder needs a `version-_-Type-_-v##` that holds the actual audio files. `Type` can be anything descriptive but I recommend keeping it short.
+Each book folder needs a `version-_-Type-_-v##` that holds the actual audio files. `Type` can be anything descriptive but I recommend keeping it short. I use things like 'mp3' or 'Graphic Audio'. Maybe you could put the name of the narrator if you like? No promises that will fit in the dropdown for selecting book versions.
 
 You can supply an `author-_-Author Name.jpg` and `cover-_-Book Title.jpg` in the respective author and book folders. Otherwise Audionook will try to download an image off of google (or perhaps just fallback on a placeholder. Placeholder for now)
 
 Here is an example folder structure
 
-```
-Brandon Sanderson
-  - author-_-Brandon Sanderson.jpg
-  - series-_-Mistborn
-    - series-_-01-_-Original Trilogy (Era One)
-      - book-_-01-_-The Final Empire
-        - cover-_-The Final Empire.jpg
-        - version-_-mp3_v01
-          - audio_files.mp3
-        - version-_-Graphic Audio_v01
-          - audio_files.mp3
-      - book-_-02-_-The Well of Ascension
-        - cover-_-The Well of Ascension.jpg
-        - version-_-mp3_v01
-          - audio_files.mp3
-    - series-_-02-_-Wax and Wayne Series (Era Two)
-      - book-_-04 - The Alloy of Law
-        - cover-_-The Alloy of Law.jpg
-        - version-_-mp3_v01
-          - audio_files.mp3
-      - book-_-05 - Shadows of Self
-        - cover-_-Shadows of Self.jpg
-        - version-_-m4b_v01
-          - audio_files.m4b
-  - book-_-Warbreaker
-    - cover-_-Warbreaker
-    - version-_-mp3_v01
-      - audio_files.mp3
+```sh
+. # /path/to/audiobooks/
+└── Brandon Sanderson                                     # Author folder.
+    ├── author-_-Brandon Sanderson.jpg                    # (Optional) Headshot of author.
+    ├── series-_-Mistborn                                 # Series folder.
+    │   │
+    │   ├── series-_-01-_-Original Trilogy (Era One)      # Sub-series folder.
+    │   │   │
+    │   │   ├── book-_-01-_-The Final Empire              # Book folder.
+    │   │   │   ├── cover-_-The Final Empire.jpg          # (Optional) Cover art for book.
+    │   │   │   │
+    │   │   │   ├── version-_-mp3_v01                     # Version folder.
+    │   │   │   │   ├── chapter_01.mp3                    # Audio files.
+    │   │   │   │   └── chapter_02.mp3
+    │   │   │   │
+    │   │   │   ├── version-_-mp3_v02                     # A second version of the same 'Type'.
+    │   │   │   │   ├── chapter_01.mp3                    # Audio files.
+    │   │   │   │   └── chapter_02.mp3
+    │   │   │   │
+    │   │   │   └── version-_-Graphic Audio_v01           # Version folder of a second type.
+    │   │   │       ├── chapter_01.mp3                    # Audio files.
+    │   │   │       └── chapter_02.mp3
+    │   │   │
+    │   │   └── book-_-02-_-The Well of Ascension         # Book folder.
+    │   │       ├── cover-_-The Well of Ascension.jpg     # (Optional) Cover art for book.
+    │   │       │
+    │   │       └── version-_-mp3_v01                     # Version folder.
+    │   │           ├── chapter_01.mp3                    # Audio files.
+    │   │           └── chapter_02.mp3
+    │   │
+    │   └── series-_-02-_-Wax and Wayne Series (Era Two)  # Sub-series folder.
+    │       │
+    │       └── book-_-04 - The Alloy of Law              # Book folder.
+    │           ├── cover-_-The Alloy of Law.jpg          # (Optional) Cover art for book.
+    │           │
+    │           └── version-_-mp3_v01                     # Version folder.
+    │               ├── chapter_01.mp3                    # Audio files.
+    │               └── chapter_02.mp3
+    │
+    └────── book-_-Warbreaker                             # Book folder.
+            ├── cover-_-Warbreaker                        # (Optional) Cover art for book.
+            │
+            └── version-_-mp3_v01                         # Version folder.
+                ├── chapter_01.mp3                        # Audio files.
+                └── chapter_02.mp3
 ```
 
 This would have 6 unique versions for 5 different books. Some of the books are part of a series (Mistborn Era One) which is itself part of a series (Mistborn) while some books are standalone (Warbreaker)
 
-The app requires this folder structure so that the books can be organized by author and series which is a way I strongly prefer to browse my library over other audiobook managers I've tried which put books into a long list and that's it. 
+The app requires this folder structure so that the books can be organized by author and series which is a way I strongly prefer to browse my library over other audiobook managers I've tried which put books into a long list and that's it. It should provide a lot of flexibility to have the app organize books however you like. If you do not care about series you can just have `book-_-` folders below each `Author Name` folder. Or you can nest them inside \<x> number of `series-_-` folders.
+
+Disclaimer - I plan to support re-organizing books and series from within the app, but it requires moving files on disk and updating db paths accordingly. This feature is not fully implemented so for now it's best to spend a minute up front organizing your files before initializing the app. I realize this can be tedious so I will probably revisit how the api expects files to be organized at some point.
 
 ## Public Access
 Port foward your `<public-port>` on your router. If you own a domain name you could setup a reverse proxy ([I like NPM](https://nginxproxymanager.com/)) in the same or another portainer stack and give your server a proper url/ ssl. Or any other way of handling ssl would be good to do. Otherwise you can access the site at `http://<your-public-ip>:<public-port>`
@@ -185,6 +207,22 @@ poetry shell
 
 - `make tarball-dev` (or `make tarball`)
 
+```make
+tarball:
+	@rm -f ./docker/audionook.tarball
+	@tar --exclude='*.pyc' \
+	-cvf docker/audionook.tar \
+	--transform 'flags=r;s|docker/Dockerfile|Dockerfile|' docker/Dockerfile \
+	--transform 'flags=r;s|docker/.dockerignore|.dockerignore|' docker/.dockerignore \
+	requirements \
+	src/scrivapi \
+	web/html \
+	web/nginx \
+	web/flutter/build/web \
+	bin/run.py \
+	bin/supervisord.conf
+```
+
 - In Portainer -> Images -> Build a new image -> Upload
 
 - Set the image name `<your>/<image_name>`. 
@@ -225,7 +263,7 @@ services:
       - /path/to/ISBNoverrides.txt:/app/stacks/ISBNoverrides.txt
       # Required extra mounts for dev container
       # scrivapi
-      - /path/to/repo/src:/app/src
+      - /path/to/repo/src/scrivapi:/app/src/scrivapi
       - /path/to/repo/bin/run_dev.py:/app/bin/run.py
       - /path/to/repo/docker/dev.env:/app/bin/.env
       # nginx
@@ -237,7 +275,7 @@ services:
       - /path/to/repo/web/flutter/build/web:/var/www/audionook
       - /path/to/repo/web/html:/var/www/default
       # startup
-      - /path/to/repo/bin/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf
+      - /path/to/repo/bin/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
     ports:
       - public-port:80
 ```
@@ -426,6 +464,10 @@ Setting up NPM
 [Database Queries with SQLAlchemy](https://hackersandslackers.com/database-queries-sqlalchemy-orm/)
 <br/>
 Reference page for creating SQL queries with SQLAlchely
+
+[Pass Arguments to Pytest](https://stackoverflow.com/questions/40880259/how-to-pass-arguments-in-pytest-by-command-line)
+<br/>
+Stackoverflow page for passing arguments into pytest commands
 
 [Marius Hosting](https://mariushosting.com/)
 <br/>
