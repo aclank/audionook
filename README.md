@@ -42,14 +42,15 @@ services:
       - public-port:80
 ```
 
-The available environment variables are:
+The main available environment variables are:
 
 | Key | Description |
 | --- | --- |
 | SECRET_KEY | A key for the SQLite database. Has no default. |
-| ENVIRON_LOGLEVEL | Defaults to `info`, can be `debug`. `debug` would print more stuff into the fastapi logs. | 
-| WIKI_USER_AGENT | [An optional http header](https://meta.wikimedia.org/wiki/User-Agent_policy) for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
-| TZ | [Time Zone Codes.](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) Optional but recommended. For now just effects timestamp in the logs. |
+| HOST_URL | Host URL for flutter to query the api. Something like `http://<your_ip>:<port>` or `http://example.domain.com` if you have setup a reverse proxy. If you do not have a reverse proxy `<port>` needs to match your `public-port`. Use your local IP if you do not need access from outside your server location. |
+| ENVIRON_LOGLEVEL | (Optional) Defaults to `info`, can be `debug`. `debug` would print more stuff into the fastapi logs. |
+| WIKI_USER_AGENT | (Optional) [An http header](https://meta.wikimedia.org/wiki/User-Agent_policy) for getting some metadata about authors. Syntax for the Wiki User Agent is like this <br/> (The app is built with pip wikipedia-api==0.6.0 so that part needs to stay the same): <br/> `<api-name>/<api-version> (<your-host-domain>; <your-email>) wikipedia-api/0.6.0` <br/> `scrivapi/0.01 (example.domain.com; your-email@gmail.com) wikipedia-api/0.6.0` | 
+| TZ | (Optional) [Time Zone Codes.](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). For now just effects the timestamp in the logs. |
 
 
 
@@ -122,7 +123,7 @@ Here is an example folder structure
             └── chapter_02.mp3
 ```
 
-This would have 6 unique versions for 5 different books. Some of the books are part of a series (Mistborn Era One) which is itself part of a series (Mistborn) while some books are standalone (Warbreaker)
+This would have 6 unique versions for 4 total books. Some of the books are part of a series (Mistborn Era One) which is itself part of a series (Mistborn) while some books are standalone (Warbreaker)
 
 The app requires this folder structure so that the books can be organized by author and series which is a way I strongly prefer to browse my library over other audiobook managers I've tried which put books into a long list and that's it. It should provide a lot of flexibility to have the app organize books however you like. If you do not care about series you can just have `book-_-` folders below each `Author Name` folder. Or you can nest them inside \<x> number of `series-_-` folders.
 
